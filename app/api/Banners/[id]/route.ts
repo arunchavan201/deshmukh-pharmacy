@@ -19,9 +19,15 @@ export async function GET(request: Request, { params }: { params: { id: string }
       return NextResponse.json({ success: false, error: "Banner not found" }, { status: 404 })
     }
 
+    // Add imagePath for compatibility
+    const bannerWithImagePath = {
+      ...banner,
+      imagePath: banner.imageData || banner.imagePath
+    }
+
     return NextResponse.json({
       success: true,
-      data: banner,
+      data: bannerWithImagePath,
     })
   } catch (error) {
     console.error("Database error:", error)
@@ -68,6 +74,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
 
     if (removeImage) {
       updateData.imageData = null
+      updateData.imagePath = null // Add for compatibility
       updateData.imageName = null
       updateData.imageType = null
       updateData.imageSize = null
@@ -84,6 +91,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
       const imageDataUrl = `data:${image.type};base64,${base64Image}`
 
       updateData.imageData = imageDataUrl
+      updateData.imagePath = imageDataUrl // Add for compatibility
       updateData.imageName = image.name
       updateData.imageType = image.type
       updateData.imageSize = image.size
