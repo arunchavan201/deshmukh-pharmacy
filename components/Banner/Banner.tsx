@@ -10,7 +10,8 @@ interface Banner {
   title: string
   description?: string
   link?: string
-  imagePath: string
+  imagePath?: string
+  imageData?: string
   isActive: boolean
 }
 
@@ -21,21 +22,21 @@ interface BannerProps {
 export default function Banner({ banners }: BannerProps) {
   const [currentIndex, setCurrentIndex] = useState(0)
 
+  const activeBanners = banners.filter((banner) => banner.isActive && (banner.imagePath || banner.imageData))
+
   useEffect(() => {
-    if (banners.length <= 1) return
+    if (activeBanners.length <= 1) return
 
     const interval = setInterval(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % banners.length)
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % activeBanners.length)
     }, 5000) // Change slide every 5 seconds
 
     return () => clearInterval(interval)
-  }, [banners.length])
+  }, [activeBanners.length])
 
   if (!banners || banners.length === 0) {
     return null
   }
-
-  const activeBanners = banners.filter((banner) => banner.isActive)
 
   if (activeBanners.length === 0) {
     return null
@@ -53,14 +54,22 @@ export default function Banner({ banners }: BannerProps) {
 
   const currentBanner = activeBanners[currentIndex]
 
+  // Add null check for both imagePath and imageData
+  if (!currentBanner?.imagePath && !currentBanner?.imageData) {
+    return null
+  }
+
+  // Use imageData if available, otherwise fall back to imagePath
+  const imageSrc = currentBanner.imageData || currentBanner.imagePath
+
   return (
     <div className="w-full flex justify-center py-8 bg-gray-50">
       <div className="w-[75%] max-w-6xl relative">
         <div className="relative">
           {/* Main Banner Image - Show as is */}
           <Image
-            src={currentBanner.imagePath}
-            alt={currentBanner.title}
+            src={imageSrc}
+            alt={currentBanner.title || 'Banner'}
             width={0}
             height={0}
             sizes="75vw"
