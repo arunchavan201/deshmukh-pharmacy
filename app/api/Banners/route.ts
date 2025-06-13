@@ -9,14 +9,20 @@ export async function GET() {
 
     const banners = await db
       .collection("banners")
-      .find({ isActive: true })
+      .find({})
       .sort({ createdAt: -1 })
       .toArray()
+
+    // Add imagePath field for compatibility with frontend
+    const bannersWithImagePath = banners.map(banner => ({
+      ...banner,
+      imagePath: banner.imageData || banner.imagePath
+    }))
 
     return NextResponse.json(
       {
         success: true,
-        data: banners,
+        data: bannersWithImagePath,
       },
       { headers: { "Cache-Control": "no-store" } }
     )
@@ -66,6 +72,7 @@ export async function POST(request: Request) {
       description,
       link,
       imageData: imageDataUrl,
+      imagePath: imageDataUrl, // Add for compatibility
       imageName: image.name,
       imageType: image.type,
       imageSize: image.size,
@@ -83,6 +90,7 @@ export async function POST(request: Request) {
           description,
           link,
           imageData: imageDataUrl,
+          imagePath: imageDataUrl, // Add for compatibility
           isActive,
         },
       },
