@@ -26,13 +26,14 @@ function SectionHero({ title, bgImage }: { title: string; bgImage?: string }) {
   )
 }
 
-export default function GalleryPage({ searchParams }: { searchParams: { category?: string } }) {
+export default async function GalleryPage({ searchParams }: { searchParams: Promise<{ category?: string }> }) {
+  const { category } = await searchParams
   return (
     <>
       <SectionHero title="Gallery" bgImage="/about.avif" />
       <div className="container mx-auto px-4 py-12">
         <h1 className="text-3xl font-bold text-center mb-12">Gallery</h1>
-        <GalleryContent selectedCategory={searchParams.category} />
+        <GalleryContent selectedCategory={category} />
       </div>
     </>
   )

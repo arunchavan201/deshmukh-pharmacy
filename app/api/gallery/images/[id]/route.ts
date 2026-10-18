@@ -2,9 +2,9 @@ import { NextResponse } from "next/server"
 import { ObjectId } from "mongodb"
 import clientPromise from "@/lib/mongodb"
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const id = params.id
+    const { id } = await params
 
     if (!ObjectId.isValid(id)) {
       return NextResponse.json({ success: false, error: "Invalid image ID" }, { status: 400 })

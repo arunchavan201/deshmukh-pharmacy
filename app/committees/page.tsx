@@ -40,49 +40,24 @@ function SectionHero({ title, bgImage }: { title: string; bgImage?: string }) {
   )
 }
 
-export default async function CommitteesPage({ searchParams }: { searchParams: { section?: string } }) {
+export default async function CommitteesPage({ searchParams }: { searchParams: Promise<{ section?: string }> }) {
   const committees = await getCommittees()
+  const { section = "" } = await searchParams
 
   // Define default committees if none are found in the database
   const defaultCommittees = [
-    {
-      name: "Placement Cell",
-      members: [],
-    },
-    {
-      name: "Grievance Committee",
-      members: [],
-    },
-    {
-      name: "Anti-Ragging Committee",
-      members: [],
-    },
-    {
-      name: "Anti-Discrimination Cell",
-      members: [],
-    },
-    {
-      name: "Vishakha Committee",
-      members: [],
-    },
-    {
-      name: "Avishkar Cell",
-      members: [],
-    },
-    {
-      name: "Development Committee",
-      members: [],
-    },
-    {
-      name: "Managing Committee",
-      members: [],
-    },
+    { name: "Placement Cell", members: [] },
+    { name: "Grievance Committee", members: [] },
+    { name: "Anti-Ragging Committee", members: [] },
+    { name: "Anti-Discrimination Cell", members: [] },
+    { name: "Vishakha Committee", members: [] },
+    { name: "Avishkar Cell", members: [] },
+    { name: "Development Committee", members: [] },
+    { name: "Managing Committee", members: [] },
   ]
 
-  // Merge database committees with default committees
-  const allCommittees = committees.length > 0 ? committees : defaultCommittees
-
-  const section = searchParams.section || "antiragging" // default section
+  // Serialize Mongo documents (ObjectId, Date) into plain JSON for the client component
+  const allCommittees = JSON.parse(JSON.stringify(committees.length > 0 ? committees : defaultCommittees))
 
   return (
     <>

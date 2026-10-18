@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { Menu, X, MapPin, Phone, Mail, ChevronDown } from "lucide-react"
@@ -62,6 +62,19 @@ const libraryOptions = [
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [openDropdowns, setOpenDropdowns] = useState<string[]>([])
+  const [committeeOptions, setCommitteeOptions] = useState(committeesOptions)
+
+  // Load committee names from the database so every committee added in the admin panel shows up
+  useEffect(() => {
+    fetch("/api/committees")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data?.success && Array.isArray(data.data) && data.data.length > 0) {
+          setCommitteeOptions(data.data.map((c: any) => ({ label: c.name, value: c._id })))
+        }
+      })
+      .catch(() => {})
+  }, [])
 
   const toggleDropdown = (itemName: string) => {
     setOpenDropdowns(prev => 
@@ -76,8 +89,8 @@ export default function Header() {
       {/* Top Info Section */}
       <div className="container mx-auto px-4 py-4 flex flex-col md:flex-row items-center justify-between gap-4">
         <div className="flex items-center space-x-2 md:space-x-4">
-          <div className="relative h-12 w-12 md:h-20 md:w-20">
-            <Image src="/logo.svg" alt="Shramjivi Logo" fill className="object-contain" />
+          <div className="relative h-14 w-14 md:h-24 md:w-24">
+            <Image src="/logo.png" alt="Deshmukh College Of Pharmacy Logo" fill priority className="object-contain" />
           </div>
           <div>
             <h1 className="text-sm md:text-xl font-bold text-[#1a237e] uppercase leading-tight">Deshmukh College Of Pharmacy</h1>
@@ -154,14 +167,11 @@ export default function Header() {
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
-                  {committeesOptions.map((opt) => (
+                  {committeeOptions.map((opt) => (
                     <DropdownMenuItem
                       key={opt.value}
                       onClick={() => {
-                        window.location.href =
-                          opt.value === "placementcell"
-                            ? "/committees"
-                            : `/committees?section=${opt.value}`
+                        window.location.href = `/committees?section=${opt.value}`
                       }}
                     >
                       {opt.label}
@@ -325,17 +335,14 @@ export default function Header() {
                   </button>
                   {openDropdowns.includes(item.name) && (
                     <div className="pl-4 space-y-1">
-                      {committeesOptions.map((opt) => (
+                      {committeeOptions.map((opt) => (
                         <button
                           key={opt.value}
                           className="block w-full text-left px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50"
                           onClick={() => {
                             setMobileMenuOpen(false)
                             setOpenDropdowns([])
-                            window.location.href =
-                              opt.value === "placementcell"
-                                ? "/committees"
-                                : `/committees?section=${opt.value}`
+                            window.location.href = `/committees?section=${opt.value}`
                           }}
                         >
                           {opt.label}

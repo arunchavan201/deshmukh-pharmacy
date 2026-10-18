@@ -30,11 +30,17 @@ async function getAboutContent() {
     const directors = await db.collection("directors").find({}).sort({ order: 1 }).toArray()
     const leadership = await db.collection("leadership").find({}).toArray() as Leader[]
     
-    return {
-      about: aboutContent || { institute: "", society: "" },
-      directors: directors || [],
-      leadership: leadership || [],
-    }
+    // No admin screen writes to "directors"; fall back to the leadership entries managed in the admin panel
+    const directorList = directors.length > 0 ? directors : leadership
+
+    // Serialize Mongo documents (ObjectId, Date) into plain JSON for the client component
+    return JSON.parse(
+      JSON.stringify({
+        about: aboutContent || { institute: "", society: "" },
+        directors: directorList || [],
+        leadership: leadership || [],
+      }),
+    )
   } catch (error) {
     console.error("Error fetching about content:", error)
     return {
@@ -97,17 +103,18 @@ function AboutPageHero({ title, bgImage }: { title: string; bgImage?: string }) 
   )
 }
 
-export default async function AboutPage({ searchParams }: { searchParams: { section?: string } }) {
+export default async function AboutPage({ searchParams }: { searchParams: Promise<{ section?: string }> }) {
   const { about, directors, leadership } = await getAboutContent()
+  const params = await searchParams
 
   const section =
-    searchParams.section === "society"
+    params.section === "society"
       ? "society"
-      : searchParams.section === "vision"
+      : params.section === "vision"
       ? "vision"
-      : searchParams.section === "directors"
+      : params.section === "directors"
       ? "directors"
-      : searchParams.section === "leadership"
+      : params.section === "leadership"
       ? "leadership"
       : "institute"
 

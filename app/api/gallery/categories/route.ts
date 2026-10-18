@@ -17,7 +17,9 @@ export async function GET() {
           ...category,
           id: category._id.toString(),
           images: images.map((img) => ({
+            _id: img._id.toString(),
             id: img._id.toString(),
+            imageId: img.imageId,
             src: `/api/files/${img.imageId}`,
             title: img.title || "",
             description: img.description || "",

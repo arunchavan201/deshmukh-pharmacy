@@ -169,8 +169,6 @@ export default function ContactPage() {
                   Kasar Sirsi 413607,
                   <br />
                   Tq. Nilanga, Dist. Latur
-                  <br />
-                  Affiliated to S.N.D.T.W University, Mumbai
                 </p>
               </div>
             </div>

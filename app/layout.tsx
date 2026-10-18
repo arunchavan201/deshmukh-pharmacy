@@ -13,8 +13,9 @@ const inter = Inter({ subsets: ["latin"] })
 
 export const metadata = {
   title: "Deshmukh College Of Pharmacy",
-  description: "Affiliated to S.N.D.T.W University, Mumbai",
-  keywords: "fashion design, institute, education, design courses, SNDTW University",
+  description: "Deshmukh College Of Pharmacy, Kasar Sirsi - D.Pharmacy (PCI 8251, DTE 2636, MSBTE 52343)",
+  keywords: "pharmacy, D.Pharmacy, college, Kasar Sirsi, Nilanga, Latur",
+  icons: { icon: "/logo.png", apple: "/logo.png" },
     generator: 'v0.dev'
 }
 
